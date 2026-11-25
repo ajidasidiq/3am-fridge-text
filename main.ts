@@ -12,5 +12,13 @@ import { mkdirSync, writeFileSync } from "node:fs";
 const line =
   "3am. You didn't come for food. You came because the bed asked too many questions.";
 
+// Tidy the line and refuse to write anything that breaks the bounty rules:
+// it has to stay a single line of 1 to 140 characters, so a stray newline
+// or an over-long edit fails loudly here instead of shipping a bad entry.
+const entry = line.trim();
+if (entry.length === 0 || entry.length > 140 || entry.includes("\n")) {
+  throw new Error("Entry must be one line of 1-140 characters.");
+}
+
 mkdirSync("/output", { recursive: true });
-writeFileSync("/output/entry.txt", line, "utf8");
+writeFileSync("/output/entry.txt", entry, "utf8");
