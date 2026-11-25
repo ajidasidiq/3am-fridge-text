@@ -13,12 +13,22 @@ const line =
   "3am. You didn't come for food. You came because the bed asked too many questions.";
 
 // Tidy the line and refuse to write anything that breaks the bounty rules:
-// it has to stay a single line of 1 to 140 characters, so a stray newline
-// or an over-long edit fails loudly here instead of shipping a bad entry.
-const entry = line.trim();
-if (entry.length === 0 || entry.length > 140 || entry.includes("\n")) {
-  throw new Error("Entry must be one line of 1-140 characters.");
+// it has to stay a single line of 1 to 140 characters, so a stray newline,
+// carriage return, or control character fails loudly here instead of
+// shipping a bad entry — the gate counts the file as one text line, so
+// anything that could split or corrupt that line is rejected up front.
+function validateEntry(text: string): string {
+  const entry = text.trim();
+  if (entry.length === 0 || entry.length > 140) {
+    throw new Error("Entry must be one line of 1-140 characters.");
+  }
+  if (/[\n\r\u0000-\u001F\u007F]/.test(entry)) {
+    throw new Error("Entry must be a single line with no line breaks or control characters.");
+  }
+  return entry;
 }
+
+const entry = validateEntry(line);
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", entry, "utf8");

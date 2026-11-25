@@ -1,1 +1,1 @@
-{"license":"MIT","name":"3am-fridge-text","private":true,"type":"module","version":"1.0.0"}
+{"license":"MIT","name":"3am-fridge-text","private":true,"scripts":{"start":"node main.ts"},"type":"module","version":"1.0.0"}
